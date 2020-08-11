@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Modality Bias in TVQA  
 The official github repository for the paper ["On Modality Bias in TVQA"](pls.accept.co.uk)
 ## TVQA:
@@ -57,3 +58,9 @@ Some tools used in our experiments for visualisation and convenience.
 
 ## Help:
 Feel free to contact me @ thomas.i.winterbottom@durham.ac.uk if you have any criticisms you'd like me to hear out or would like any help
+=======
+# tvqa_modality_bias
+Official github repository for "On Modality Bias in the TVQA Dataset" 2020 BMVC paper
+
+We got accepted at BMVC, how awesome is that!
+>>>>>>> 5f30000cd29ec51da0bf11b451db8e0f026fc81c
