@@ -45,14 +45,14 @@ Scripts to run our experiments after data is collected, edit the relevant datase
 Some tools used in our experiments for visualisation and convenience.
 
 ## Citation:
-
-`
-@inproceedings{mbintvqa,
-  title={On Modality Bias in the TVQA Dataset},
-  author={Winterbottom, T. and Al-Moubayed, N and Xiao, S. and McLean, A},
-  booktitle=booktitle = {Proceedings of the British Machine Vision Conference ({BMVC})},
-  year={2020}
-}
+Currently accepted to be published at BMVC 2020
+Do not cite until the publication has finished`
+~~@inproceedings{mbintvqa,~~
+  ~~title={On Modality Bias in the TVQA Dataset},~~
+  ~~author={Winterbottom, T. and Al-Moubayed, N and Xiao, S. and McLean, A},~~
+  ~~booktitle=booktitle = {Proceedings of the British Machine Vision Conference ({BMVC})},~~
+  ~~year={2020}~~
+~~}~~
 `
 
 ## Help:
