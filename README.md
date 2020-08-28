@@ -48,11 +48,11 @@ Some tools used in our experiments for visualisation and convenience.
 Currently accepted to be published at BMVC 2020
 Do not cite until the publication has finished<br>
 
-~~@inproceedings{mbintvqa,~~
-  ~~title={On Modality Bias in the TVQA Dataset},~~
-  ~~author={Winterbottom, T. and Xiao, S. and McLean, A. and Al Moubayed, N.},~~
-  ~~booktitle=booktitle = {Proceedings of the British Machine Vision Conference ({BMVC})},~~
-  ~~year={2020}}~~
+@inproceedings{mbintvqa,
+  title={On Modality Bias in the TVQA Dataset},
+  author={Winterbottom, T. and Xiao, S. and McLean, A. and Al Moubayed, N.},
+  booktitle=booktitle = {Proceedings of the British Machine Vision Conference ({BMVC})},
+  year={2020}}
 
 ## Help:
 Feel free to contact me @ `thomas.i.winterbottom@durham.ac.uk` if you have any criticisms you'd like me to hear out or would like any help
