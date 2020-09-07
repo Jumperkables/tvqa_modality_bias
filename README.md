@@ -49,7 +49,7 @@ Published at BMVC 2020<br><br>
 @inproceedings{mbintvqa,<br>
   title={On Modality Bias in the TVQA Dataset},<br>
   author={Winterbottom, T. and Xiao, S. and McLean, A. and Al Moubayed, N.},<br>
-  booktitle=booktitle = {Proceedings of the British Machine Vision Conference ({BMVC})},<br>
+  booktitle={Proceedings of the British Machine Vision Conference ({BMVC})},<br>
   year={2020}<br>
 }
 
