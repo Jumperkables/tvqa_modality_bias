@@ -45,7 +45,7 @@ Scripts to run our experiments after data is collected, edit the relevant datase
 Some tools used in our experiments for visualisation and convenience.
 
 ## Citation:
-Published at BMVC 2020
+Published at BMVC 2020<br>
 @inproceedings{mbintvqa,<br>
   title={On Modality Bias in the TVQA Dataset},<br>
   author={Winterbottom, T. and Xiao, S. and McLean, A. and Al Moubayed, N.},<br>
