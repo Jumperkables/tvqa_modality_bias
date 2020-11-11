@@ -1,6 +1,7 @@
 __author__ = "Jie Lei, edited by Jumperkables"
 
 import os, sys
+import importlib
 sys.path.insert(1, "./tools")
 import torch
 import torch.nn as nn
@@ -259,10 +260,10 @@ if __name__ == "__main__":
 
     # My dynamic imports
     ####
-    import importlib
     print((opt.jobname))
     print((opt.modelname))
     print((opt.device))
+    import ipdb; ipdb.set_trace()
     import_string="model."+opt.modelname
     module=importlib.import_module(import_string)
     model = module.ABC(opt)
