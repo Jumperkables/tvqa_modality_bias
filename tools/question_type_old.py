@@ -2,14 +2,14 @@ __author__ = 'Jumperkables'
 import sys, os
 #sys.path.insert(1, os.path.expanduser("~/kable_management/projects/tvqa_modality_bias"))
 #sys.path.insert(1, os.path.expanduser("~/kable_management/mk8+-tvqa"))
-sys.path.insert(1, os.path.dirname(os.path.dirname(__file__)))#"..")
+sys.path.insert(1, "..")
 from utils import load_pickle, save_pickle, load_json, files_exist
 import argparse
 import matplotlib.pyplot as plt
 import numpy as np
 import random
 import seaborn as sns
-import pandas as pd
+
 
 # Create lists of eac different question type as per TVQA guidelines
 ## i.e. classify the question by it's first word and then 
@@ -94,7 +94,7 @@ def create_q_type_dict(dset, name):
     #save_pickle(q_type_dict, os.path.expanduser("~/kable_management/data/tvqa/q_type/"+name+"_q_type_dict.pickle"))
     return q_type_dict
 
-def plot_qtype_dict(qtype_dict, name, jobname):
+def plot_qtype_dict(qtype_dict, name):
     # Get the counts of each question type and sub-type
     what_after, what_before, what_when, what_other = len(qtype_dict['what']['after']), len(qtype_dict['what']['before']), len(qtype_dict['what']['when']), len(qtype_dict['what']['other'])
     who_after, who_before, who_when, who_other = len(qtype_dict['who']['after']), len(qtype_dict['who']['before']), len(qtype_dict['who']['when']), len(qtype_dict['who']['other'])
@@ -164,7 +164,7 @@ def plot_qtype_dict(qtype_dict, name, jobname):
     #labels = ['A', 'B', 'W', '']*5+['','']
     pie2, _ = ax.pie(counts, radius=1-width, labeldistance=0.7, colors=cin)#labels=labels, labeldistance=0.7, colors=cin)
     plt.setp( pie2, width=width, edgecolor='white')
-    plt.title(f"{jobname} Dataset Q-Type Distribution")#(name+' Dataset Question Type Distribution')
+    plt.title(name+' Dataset Question Type Distribution')
     from matplotlib.lines import Line2D
     custom_lines = [Line2D([0], [0], color=cm(17), lw=4),
                     Line2D([0], [0], color=cm(18), lw=4),
@@ -278,29 +278,6 @@ def plot_acc_by_type(args, model_name):
 
 
 
-def conc_dist(lanecheck_path):
-    lanecheck_dict = load_pickle(lanecheck_path)
-    acc = lanecheck_dict['acc']
-    qids_by_conc = load_pickle("/home/jumperkables/kable_management/projects/a_vs_c/tvqa/avc_statistics/qids_by_conc.pickle")
-    import ipdb; ipdb.set_trace()
-    del lanecheck_dict['acc'] # Validation accuracy kept here for other code, delete it to avoid problems
-    correct_dict = {}   # Dictionary for each question in the validation set storing if the model got that question right
-    check_dict = random.choice(list(lanecheck_dict.values()))
-    for key in check_dict.keys():    # Any of the possible feature lanes the model may have
-        if key in ['sub_out', 'vcpt_out', 'vid_out', 'reg_out', 'regtopk_out']:
-            check_key = key
-            break  
-    for qid, question_dict in lanecheck_dict.items():    
-        correct = (question_dict[check_key][5] == question_dict[check_key][6])  # 5 is ground truth, 6 is predicted
-        correct_dict[qid] = correct
-
-    none, zero, to_100, to_200, to_300 = 0,0,0,0,0
-    to_400, to_500, to_600, to_700 = 0,0,0,0
-
-    #for qid in qids_by_conc["None"]:
-
-    return ret_data, acc
-
 
 def qtype_dist(lanecheck_path):
     lanecheck_dict = load_pickle(lanecheck_path)
@@ -409,50 +386,29 @@ def magnum_opus():
     #     jerry_subpath+'tvqa_abc_svir/',
     #     jerry_subpath+'tvqa_abc_svir_bert/'
     # ]
-    subpath = "/home/jumperkables/kable_management/projects/a_vs_c/tvqa/before_stopwords"
-    with_stpwrd_subpath = "/home/jumperkables/kable_management/projects/a_vs_c/tvqa"
-    paths = [
-        os.path.join(with_stpwrd_subpath, "concgt300"),
-        os.path.join(with_stpwrd_subpath, "conclt300"),
-        os.path.join(with_stpwrd_subpath, "vi_concgt300"),
-        os.path.join(with_stpwrd_subpath, "vi_conclt300"),
-        os.path.join(with_stpwrd_subpath, "concgt500"),
-        os.path.join(with_stpwrd_subpath, "conclt500"),
-        os.path.join(with_stpwrd_subpath, "vi_concgt500"),
-        os.path.join(with_stpwrd_subpath, "vi_conclt500"),
-
-        os.path.join(subpath, "concgt300"),
-        os.path.join(subpath, "conclt300"),
-        os.path.join(subpath, "vi_concgt300"),
-        os.path.join(subpath, "vi_conclt300"),
-        os.path.join(subpath, "concgt500"),
-        os.path.join(subpath, "conclt500"),
-        os.path.join(subpath, "vi_concgt500"),
-        os.path.join(subpath, "vi_conclt500")
-    ]
-    valid_plot_paths = [os.path.join(path,'lanecheck_dict.pickle_valid') for path in paths]
-    #train_plot_paths = [path+'lanecheck_dict.pickle_train' for path in paths]
-    #valid_plot_paths = [path+'lanecheck_dict.pickle_valid' for path in paths]
+     train_plot_paths = [path+'lanecheck_dict.pickle_train' for path in paths]
+     valid_plot_paths = [path+'lanecheck_dict.pickle_valid' for path in paths]
     # Here put a list of paths to lanecheck dictionaries for training or validation outputs.i
     # With corresponding labels for each lanecheck model
     labels = [
-        'SVI_C>300_ws',
-        'SVI_C<300_ws',
-        'VI_C>300_ws',
-        'VI_C<300_ws',
-        'SVI_C>500_ws',
-        'SVI_C<500_ws',
-        'VI_C>500_ws',
-        'VI_C<500_ws',
-
-        'SVI_C>300',
-        'SVI_C<300',
-        'VI_C>300',
-        'VI_C<300',
-        'SVI_C>500',
-        'SVI_C<500',
-        'VI_C>500',
-        'VI_C<500'
+        'V',
+        'V',
+        'I',
+        'I',
+        'R',
+        'R',
+        'VI',
+        'VI',
+        'VIR',
+        'VIR',
+        'S',
+        'S',
+        'SI',
+        'SI',
+        'SVI',
+        'SVI',
+        'SVIR',
+        'SVIR'
     ]
 
     # Labels and plot paths from here
@@ -473,24 +429,11 @@ def magnum_opus():
         'other_correct', 'other_not'
     ]
     
-    glove_labels = [labels[i] for i in range(len(labels)) ]#if i%2 == 0 ]
+    glove_labels = [labels[i] for i in range(len(labels)) if i%2 == 0 ]
     bert_labels = [labels[i] for i in range(len(labels)) if i%2 == 1 ]
 
-    glove_paths = [valid_plot_paths[i] for i in range(len(valid_plot_paths)) ]#if i%2 == 0 ]
+    glove_paths = [valid_plot_paths[i] for i in range(len(valid_plot_paths)) if i%2 == 0 ]
     bert_paths = [valid_plot_paths[i] for i in range(len(valid_plot_paths)) if i%2 == 1 ]
-    
-    #####################
-    # # GloVe
-    #glove_results = {}
-    #glove_accuracies = {}
-    #for i, path in enumerate(glove_paths):
-    #    model_results, model_acc = conc_dist(path) # Model name: array of stacked data, accuracy at the end
-    #    glove_results[glove_labels[i]] = model_results
-    #    glove_accuracies[glove_labels[i]] = model_acc  
-    #survey(glove_results, category_names, glove_accuracies)
-    #plt.show()
-    #####################
-    #import sys; sys.exit()
 
     # GloVe
     glove_results = {}
@@ -510,7 +453,6 @@ def magnum_opus():
 
 
     #Glove
-    #import ipdb; ipdb.set_trace()
     survey(glove_results, category_names, glove_accuracies)
     plt.show()
     # BERT
@@ -534,19 +476,7 @@ def survey(results, category_names, accuracies):
     accuracies = list(accuracies.values())
     accuracies = [100*i for i in accuracies]
     data = np.array(list(results.values()))
-    data_accs =   [ [100*modl[i]/(modl[i]+modl[i+1])  for i in range(0, len(modl), 2) ] for modl in data ]
-    data_offset = np.asarray([ np.asarray(data_accs[i]) - accuracies[i]  for i in range(len(data))])
-    data_offset = data_offset/100
-    qtype_labels = ['What','Who','Why','Where','How','Which','Other'] 
-    labels = [f"({labels[i]} {accuracies[i]:.2f}%)" for i in range(len(labels))]
-    plt.rc('font', size=14)
-    fig = plt.figure()
-    data_offset = pd.DataFrame(data_offset)
-    data_offset.columns = qtype_labels
-    data_offset.index = labels
-    ax = sns.heatmap(data_offset, annot=True, center=0, fmt=".2%", cmap=sns.color_palette("vlag", as_cmap=True))
-    return fig, ax
-    sys.exit()
+    
     # Colours details
     #correct_colours = plt.get_cmap('tab20')([1,3,5,7,9,11,13])
     correct_colours = plt.get_cmap('Dark2')([0,1,2,3,5,6,8])
@@ -593,10 +523,9 @@ def survey(results, category_names, accuracies):
 
     #Plot Accuracies
     acc_lines = ax.hlines(accuracies, ind-3.5*width, ind+3.5*width, linestyle='dashed', color='r')
-
-
+    
     # Legend and appropriate handles
-    ax.legend(qtype_labels,loc='upper left')#, fontsize='small')
+    ax.legend(loc='upper left')#, fontsize='small')
     
 
 
@@ -616,7 +545,6 @@ if __name__ == "__main__":
     parser.add_argument('--model',  type=str,
                         default=None,
                         help='Model name')
-    parser.add_argument("--jobname", default="default", type=str, help="Jobname is on the plot")
     args = parser.parse_args()
     if not args.action:
         sys.exit()
@@ -646,7 +574,7 @@ if __name__ == "__main__":
         #plot_qtype_dict(train_qtype_dict, 'Train')
         #plot_qtype_dict(val_qtype_dict, 'Val')
         #plot_qtype_dict(test_qtype_dict, 'Test')
-        plot_qtype_dict(total_qtype_dict, 'Total', args.jobname)
+        plot_qtype_dict(total_qtype_dict, 'Total')
         
 
     # Plot the accuracy of the model by question types

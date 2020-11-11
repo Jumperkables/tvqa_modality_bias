@@ -1,7 +1,7 @@
 import sys, os
 #sys.path.insert(1, os.path.expanduser("~/kable_management/mk8+-tvqa"))
 #sys.path.insert(1, os.path.expanduser("~/kable_management/projects/tvqa_modality_bias"))
-sys.path.insert(1, os.path.dirname(os.path.dirname(__file__)))#"..")
+sys.path.insert(1, "..")
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -23,7 +23,6 @@ class BaseOptions(object):
         self.parser.add_argument("--lanecheck_path", type=str, 
             default=os.path.expanduser("~/kable_management/mk8+-tvqa/dataset_paper/jerry/results/tvqa_abc_svir_bert/lanecheck_dict.pickle_valid"), 
             help="Validation lane check path")
-        self.parser.add_argument("--jobname", type=str, help="This jobname is plotted as the title of the plot")
 
     def parse(self):
         """parse cmd line arguments and do some preprocessing"""
@@ -62,7 +61,6 @@ def one_plot(opt):
     sns.set(style="whitegrid", palette="pastel", color_codes=True)
     # Font settings for plot
     import matplotlib
-    #matplotlib.use('GTK')
     # matplotlib.rc('font', family='sans-serif') 
     # matplotlib.rc('font', serif='Helvetica Neue') 
     # matplotlib.rc('text', usetex='false') 
@@ -127,31 +125,31 @@ def one_plot(opt):
     pal_tn_fn = {"True Negative":sns.light_palette("red")[1], "False Negative":sns.light_palette("orange")[1]}
     plot_no = 1
 
-    sns.set(font_scale=1.5)
+    sns.set(font_scale=3.0)
     sns.set_style("whitegrid")
     fig, ax = plt.subplots()
     x_labels = []
     if sub_flag:
-        sub_out = [ ('Subtitles', value, aa[5], aa[6], confusion_matrix_tp_fp(a_idx, aa[5], aa[6])) for aa in sub_out for a_idx, value in enumerate(aa[:5])  ]
+        sub_out = [ ('Subtitles', value, aa[5], aa[6], confusion_matrix_tn_fn(a_idx, aa[5], aa[6])) for aa in sub_out for a_idx, value in enumerate(aa[:5])  ]
         sub_out = [ element for element in sub_out if element[4] != 'Ignore' ]
         x_labels.append('Subtitles')
     if vcpt_flag:
-        vcpt_out = [ ('Visual Concepts', value, aa[5], aa[6], confusion_matrix_tp_fp(a_idx, aa[5], aa[6])) for aa in vcpt_out for a_idx, value in enumerate(aa[:5])  ]
+        vcpt_out = [ ('Visual Concepts', value, aa[5], aa[6], confusion_matrix_tn_fn(a_idx, aa[5], aa[6])) for aa in vcpt_out for a_idx, value in enumerate(aa[:5])  ]
         vcpt_out = [ element for element in vcpt_out if element[4] != 'Ignore' ]
         x_labels.append('Visual Concepts')
     if vid_flag:
-        vid_out = [ ('ImageNet', value, aa[5], aa[6], confusion_matrix_tp_fp(a_idx, aa[5], aa[6])) for aa in vid_out for a_idx, value in enumerate(aa[:5])  ]
+        vid_out = [ ('ImageNet', value, aa[5], aa[6], confusion_matrix_tn_fn(a_idx, aa[5], aa[6])) for aa in vid_out for a_idx, value in enumerate(aa[:5])  ]
         vid_out = [ element for element in vid_out if element[4] != 'Ignore' ]
         x_labels.append('ImageNet')
     if regtopk_flag:
-        regtopk_out = [ ('Regional Features', value, aa[5], aa[6], confusion_matrix_tp_fp(a_idx, aa[5], aa[6])) for aa in regtopk_out for a_idx, value in enumerate(aa[:5])  ]
+        regtopk_out = [ ('Regional Features', value, aa[5], aa[6], confusion_matrix_tn_fn(a_idx, aa[5], aa[6])) for aa in regtopk_out for a_idx, value in enumerate(aa[:5])  ]
         regtopk_out = [ element for element in regtopk_out if element[4] != 'Ignore' ]
         x_labels.append('Regional Features')
     x_labels.append('Nothing inparticular')
     #plt.xticks([])
     data = []
-    #data += [('', 38, 1, 1, "True Negative")]
-    #data += [('1', -7, 1, 1, "True Negative")]
+    data += [('', 38, 1, 1, "True Negative")]
+    data += [('1', -7, 1, 1, "True Negative")]
     data += sub_out
     data += vcpt_out
     data += vid_out
@@ -170,8 +168,8 @@ def one_plot(opt):
     # data += [('', 38.594997, 1, 1, "False Positive")]
     #data += [('1', -5.7718792, 1, 1, "False Positive")]
     data = pd.DataFrame(data, columns=['', 'Vote Contribution', 'ground_truth', 'prediction', 'Answer Type'])
-    sns.violinplot(data=data, palette=pal_tp_fp, inner="quart", linewidth=2.5, hue='Answer Type', x='', y='Vote Contribution', split=True, legend=False, legend_out=True)
-    plt.title(opt.jobname)
+    sns.violinplot(data=data, palette=pal_tn_fn, inner="quart", linewidth=2.5, hue='Answer Type', x='', y='Vote Contribution', split=True, legend=False, legend_out=True)
+    plt.title('SVIR Trained Model')
     plt.show()
     
 
