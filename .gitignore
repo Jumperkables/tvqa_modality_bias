@@ -1,4 +1,4 @@
-__pycache__
+__pycache__/
 *.pyc
 *.pyo
 *.out
@@ -13,3 +13,6 @@ model/*.pyo
 
 wandb/
 .results
+
+data/
+a-vs-c_models/
