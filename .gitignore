@@ -1,6 +1,7 @@
 __pycache__
 *.pyc
 *.pyo
+*.out
 
 tools/__pycache__
 tools/*.pyc
@@ -9,3 +10,6 @@ tools/*.pyo
 model/__pycache__
 model/*.pyc
 model/*.pyo
+
+wandb/
+.results

@@ -10,7 +10,7 @@ from tqdm import tqdm
 from utils import load_pickle, save_pickle, load_json, files_exist
 
 # For bert
-from transformers import BertTokenizer
+from transformers import BertTokenizer, LxmertTokenizer
 
 class TVQADataset(Dataset):
     def __init__(self, opt, mode="train"):
@@ -51,6 +51,8 @@ class TVQADataset(Dataset):
             self.bert_tokeniser = BertTokenizer.from_pretrained('bert-base-uncased')
         elif opt.bert == "qa":
             self.bert_tokeniser = BertTokenizer.from_pretrained('bert-base-uncased')
+        elif opt.bert.startswith("lxmert"):
+            self.bert_tokeniser = LxmertTokenizer.from_pretrained('bert-base-uncased')
 
 
         self.glove_embedding_path = opt.glove_path
@@ -122,6 +124,13 @@ class TVQADataset(Dataset):
         if self.opt.bert is None:
             for k in self.text_keys:
                 items.append(self.numericalize(self.cur_data_dict[index][k]))
+        elif self.opt.bert.startswith("lxmert"):
+            for k in self.text_keys:
+                if k in ["a0","a1","a2","a3","a4"]:
+                    qa_append = " ".join([self.cur_data_dict[index]["q"], self.cur_data_dict[index][k]])
+                    items.append(self.bert_tokeniser.encode(qa_append, add_special_tokens=True))
+                else:
+                    items.append(self.bert_tokeniser.encode(self.cur_data_dict[index][k], add_special_tokens=True))
         else:
             for k in self.text_keys:
                 items.append(self.bert_tokeniser.encode(self.cur_data_dict[index][k], add_special_tokens=True))

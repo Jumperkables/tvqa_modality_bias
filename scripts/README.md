@@ -1,5 +1,7 @@
 # Scripts
 
+## If you're looking at the A-vs-C branch, you can disregard these scripts
+
 Some example scripts for running various experiments. We capture modality votes using a 'lanecheck' system. Visdom integration is supported.
 
 A few steps to observe:<br>

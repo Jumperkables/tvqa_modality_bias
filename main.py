@@ -18,6 +18,7 @@ from rubi_criterion import RUBiCriterion
 import radam
 from transformers import *
 from utils import load_pickle, save_pickle
+import wandb
 ##############
 
 
@@ -32,7 +33,7 @@ def train(opt, dset, model, criterion, optimizer, epoch, previous_best_acc, sche
     valid_acc_log = ["batch_idx\tacc"]
     train_corrects = []
     torch.set_grad_enabled(True)
-    for batch_idx, batch in tqdm(enumerate(train_loader)):
+    for batch_idx, batch in tqdm(enumerate(train_loader), total=len(train_loader)):
         # Process inputs
         if(opt.lrtype == "cyclic"):
             scheduler.batch_step()
@@ -89,7 +90,7 @@ def train(opt, dset, model, criterion, optimizer, epoch, previous_best_acc, sche
         else:
             pred_ids = outputs.data.max(1)[1]
         train_corrects += pred_ids.eq(targets.data).cpu().numpy().tolist()
-        if (batch_idx % opt.log_freq == 2):#(opt.log_freq-1)):
+        if ((batch_idx % opt.log_freq) == (opt.log_freq-1)):#15):
             niter = epoch * len(train_loader) + batch_idx
             train_acc = sum(train_corrects) / float(len(train_corrects))
             train_loss = sum(train_loss) / float(len(train_loss))#from train_corrects
@@ -103,6 +104,8 @@ def train(opt, dset, model, criterion, optimizer, epoch, previous_best_acc, sche
 
             # Validation
             if opt.dual_stream or opt.deep_cca:
+                valid_acc, _ = validate(opt, dset, model, mode="valid")
+            elif not opt.lanecheck:
                 valid_acc, _ = validate(opt, dset, model, mode="valid")
             else:
                 valid_acc, val_lanecheck_dict = validate_lanecheck(opt, dset, model, mode="valid")
@@ -123,9 +126,17 @@ def train(opt, dset, model, criterion, optimizer, epoch, previous_best_acc, sche
 
                 # Save the predictions for validation and training datasets, and the state dictionary of the model
                 #_, train_lanecheck_dict = validate_lanecheck(opt, dset, model, mode="train")
-                if (not opt.dual_stream) and (not opt.deep_cca):
-                    save_pickle(val_lanecheck_dict, opt.lanecheck_path+'_valid')
+                if ((not opt.dual_stream) and (not opt.deep_cca)):
+                    if opt.lanecheck:
+                        save_pickle(val_lanecheck_dict, opt.lanecheck_path+'_valid')
                 torch.save(model.state_dict(), os.path.join(opt.results_dir, "best_valid.pth"))
+            # Cleaner, newer, wandb logger code    
+            if opt.wandb:
+                wandb.log({
+                    "Val Acc"   :valid_acc,
+                    "Best Acc"  :previous_best_acc,
+                    "Train Loss":train_loss
+                })
 
             # reset to train
             torch.set_grad_enabled(True)
@@ -217,7 +228,7 @@ def validate(opt, dset, model, mode="valid"):
     valid_qids = []
     valid_loss = []
     valid_corrects = []
-    for _, batch in enumerate(valid_loader):
+    for _, batch in tqdm(enumerate(valid_loader), total=len(valid_loader)):
         model_inputs, targets, qids = preprocess_inputs(batch, opt.max_sub_l, opt.max_vcpt_l, opt.max_vid_l,
                                                         device=opt.device)
         if opt.dual_stream:
@@ -251,6 +262,11 @@ if __name__ == "__main__":
     writer = SummaryWriter(opt.results_dir)
     opt.writer = writer
     plotter = VisdomLinePlotter(env_name=opt.jobname)
+
+    if opt.wandb:
+        wandb.init(project="a_vs_c", name=opt.jobname)
+        wandb.config.update(opt)
+
     opt.plotter = plotter
     dset = TVQADataset(opt)
     if opt.bert is None:
@@ -263,10 +279,19 @@ if __name__ == "__main__":
     print((opt.jobname))
     print((opt.modelname))
     print((opt.device))
-    import ipdb; ipdb.set_trace()
-    import_string="model."+opt.modelname
-    module=importlib.import_module(import_string)
-    model = module.ABC(opt)
+    fyle, model = opt.modelname.split(".")
+    import_string="model."+fyle
+    module = importlib.import_module(import_string)
+    if model == "Hopfield":
+        model = module.Hopfield(opt)
+    elif model == "Lxmert_adapt":
+        model = module.Lxmert_adapt(opt)
+    else:
+        raise NotImplementedError("The model import functionality is edited. You may need to make a minor change here to get the right model")
+
+    #if True:
+    #    model.load_state_dict(torch.load("/home/jumperkables/kable_management/projects/tvqa_modality_bias/.results/mk0_i_lxmert/best_valid.pth"))
+
     if opt.rubi:
         # My rubi implementation uses a question/subtitle only model to contrast against a question/subtitle/imagenet feature
         rubi_opt = opt

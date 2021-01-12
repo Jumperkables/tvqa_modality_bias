@@ -37,6 +37,7 @@ class BaseOptions(object):
 
         ################ Jumperkables's Additions and alterations
         self.parser.add_argument("--jobname", type=str, default="default_job_name", help="name of the job")
+        self.parser.add_argument("--wandb", action="store_true", help="Plot using wandb")
         self.parser.add_argument("--modelname", type=str, default="tvqa_abc", help="name of the model ot use")
         self.parser.add_argument("--lrtype", type=str, choices=["adam", "cyclic", "radam", "lrelu"], default="adam", help="Kind of learning rate")
         self.parser.add_argument("--poolnonlin", type=str, choices=["tanh", "relu", "sigmoid", "None", "lrelu"], default="None", help="add nonlinearities to pooling layer")
@@ -50,7 +51,7 @@ class BaseOptions(object):
         self.parser.add_argument("--pool_in_dims", type=int, nargs='+', default=[300,300], help="Input dimensions to pooling layers")
         self.parser.add_argument("--pool_out_dim", type=int, default=600, help="Output dimension to pooling layers")
         self.parser.add_argument("--pool_hidden_dim", type=int, default=1500, help="Some pooling types come with a hidden internal dimension")
-        self.parser.add_argument("--bert", type=str, choices=["default", "mine", "multi_choice", "qa"], default=None, help="What kind of BERT model to use")
+        self.parser.add_argument("--bert", type=str, choices=["default", "mine", "multi_choice", "qa", "lxmert", "lxmertqa"], default=None, help="What kind of BERT model to use")
         self.parser.add_argument("--reg_feat_path", type=str, default=os.path.expanduser("~/kable_management/data/tvqa/regional_features/100p.h5"),
                                     help="regional features")
         self.parser.add_argument("--my_vcpt", type=bool, default=False, help="Use my extracted visual concepts")
@@ -61,6 +62,7 @@ class BaseOptions(object):
         self.parser.add_argument("--disable_streams", type=str, default=None, nargs="+", choices=["vcpt", "sub", "imagenet", "regional"], #added regional support here
                                  help="disable the input stream from voting in the softmax of model outputs")
         self.parser.add_argument("--dset", choices=["valid", "test", "train"], default="valid", type=str, help="The dataset to use")
+        self.parser.add_argument("--unfreeze", type=str, choices=["all", "heads", "none"], default="none", help="Fix the first few parameters of the transformer")
         ########################
 
         self.parser.add_argument("--n_layers_cls", type=int, default=1, help="number of layers in classifier")
