@@ -2,8 +2,9 @@ import visdom
 import numpy as np
 import getpass
 
+# Inspired by this tutorial: https://github.com/noagarcia/visdom-tutorial
+
 class VisdomLinePlotter(object):
-    """Plots to Visdom"""
     def __init__(self, env_name='main'):
         if getpass.getuser() == "jumperkables":
             self.viz = visdom.Visdom()
