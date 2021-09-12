@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 #from .objectives import cca_loss
+# See https://github.com/Michaelvll/DeepCCA under MIT license
 
 
 class MlpNet(nn.Module):
