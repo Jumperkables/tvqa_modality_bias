@@ -2,6 +2,8 @@ import torch.nn as nn
 import torch
 import torch.nn.functional as F
 
+# Original implementation from: https://github.com/cdancette/rubi.bootstrap.pytorch/ , under the BSD 3-Clause License
+
 class RUBiCriterion(nn.Module):
 
     def __init__(self, question_loss_weight=1.0):
