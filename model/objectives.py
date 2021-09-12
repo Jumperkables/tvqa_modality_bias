@@ -1,5 +1,6 @@
 import torch
 
+# See https://github.com/Michaelvll/DeepCCA for original, under MIT license
 
 class cca_loss():
     def __init__(self, outdim_size, use_all_singular_values, device):
