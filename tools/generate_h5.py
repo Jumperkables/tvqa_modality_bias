@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+# Code adapted from https://github.com/peteanderson80/bottom-up-attention under MIT license
 
 """Generate bottom-up attention features as a tsv file. Can use multiple gpus, each produces a 
    separate tsv file that can be merged later (e.g. by using merge_tsv function). 
